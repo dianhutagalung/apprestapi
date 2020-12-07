@@ -16,7 +16,7 @@ exports.registrasi = function(req, res){
         tanggal_daftar: new Date()
     }
 
-    let query = "SELECT email FROM ?? WHERE ??";
+    let query = "SELECT email FROM ?? WHERE ??=?";
     let table = ["user", "email", post.email];
 
     query = mysql.format(query,table);
@@ -29,7 +29,7 @@ exports.registrasi = function(req, res){
                 let query = "INSERT INTO ?? SET ?";
                 let table = ["user"];
                 query = mysql.format(query, table);
-                connection.query(query, function(error, rows){
+                connection.query(query, post, function(error, rows){
                     if(error){
                         console.log(error)
                     }else{
@@ -37,7 +37,7 @@ exports.registrasi = function(req, res){
                     }
                 })
             }else{
-                response.ok("Email sudah  terdaftar")
+                response.ok("Email sudah  terdaftar",res)
             }
         }
     })
