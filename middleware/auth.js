@@ -59,7 +59,6 @@ exports.login = function(req, res){
         if(error){
             console.log(error);
         }else{
-            console.log(rows.length)
             if(rows.length == 1){
                 let token = jwt.sign({rows}, config.secret, {
                     expiresIn:1440 //1440 detik
@@ -93,4 +92,9 @@ exports.login = function(req, res){
             }
         }
     })
+}
+
+// test halaman rahasia :)
+exports.halamanrahasia = function(req, res){
+    response.ok("halaman ini hanya untuk user dengan  role = 2", res)
 }
