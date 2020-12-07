@@ -42,3 +42,55 @@ exports.registrasi = function(req, res){
         }
     })
 }
+
+
+//controller untuk login
+exports.login = function(req, res){
+    let post = {
+        password: req.body.password,
+        email: req.body.email
+    }
+
+    let query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
+    var table = ["user", "password", md5(post.password), "email", post.email];
+
+    query = mysql.format(query,table);
+    connection.query(query, function(error, rows){
+        if(error){
+            console.log(error);
+        }else{
+            console.log(rows.length)
+            if(rows.length == 1){
+                let token = jwt.sign({rows}, config.secret, {
+                    expiresIn:1440 //1440 detik
+                })
+                id_user = rows[0].id_user
+
+                let data = {
+                    id_user: id_user,
+                    access_token: token,
+                    ip_address: ip.address()
+                }
+
+                let query = "INSERT INTO ?? SET ?";
+                let table = ["akses_token"];
+
+                query = mysql.format(query, table);
+                connection.query(query, data, function(error, rows){
+                    if(error){
+                        console.log(error);
+                    }else{
+                         res.json({
+                             success: true,
+                             message:'Token JWT tergenerate',
+                             token:token,
+                             curlUser: data.id_user
+                         });
+                    }
+                })
+            }else{
+                 res.json({"Error": true, "Message":"Email atau password salah!"});
+            }
+        }
+    })
+}
